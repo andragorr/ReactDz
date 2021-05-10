@@ -1,4 +1,4 @@
-export default function Post(item,search){
+export default function Post({item, search}){
     return(
         <div>
             {item.id} -

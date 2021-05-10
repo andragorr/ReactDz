@@ -26,7 +26,7 @@ export default function Posts(){
                 {
                     posts.map((value) => <Post key={value.id}
                     item={value}
-                    search={search()}/>)
+                    search={search}/>)
                 }
                 <div className={'single-post-box'}>
                     {
