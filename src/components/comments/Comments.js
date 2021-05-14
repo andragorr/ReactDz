@@ -1,42 +1,28 @@
-import {useEffect, useState} from 'react';
-import Comment from "../comment/Comment";
-import axiosInstance from   '../../services/api';
+import {useEffect, useState} from "react";
+import Comment from '../comment/Comment'
+import {Route, Switch} from "react-router-dom";
+import CommentDetails from "../comment-details/CommentDetails";
 
-export default function Comments() {
-    let [comments, setComments] = useState([]);
-    let [singleComment , setSingleComment] = useState(null);
+export default function Comments(props) {
+    let {match: {url}} = props;
+    let [comments, setComments]=useState([]);
 
     useEffect(() => {
-        axiosInstance.get('/comments').then(value => setComments([...value.data]));
-    },[]);
-
-    const search = (id) => {
-        let findComment = comments.find(value => value.id === id);
-        console.log(findComment);
-        setSingleComment(findComment);
-    };
+        fetch('https://jsonplaceholder.typicode.com/comments')
+            .then(value => value.json())
+            .then(value => {
+                setComments([...value]);
+            });
+    }, []);
 
     return (
-        <div className={'wrap-comments'}>
-            <div className={'comments-box'}>
-                {
-                    comments.map(value => <Comment
-                    key={value.id}
-                    item={value}
-                    search={search}/>)
-                }
-
-            </div>
-            <div className={'single-comment-box'}>
-                {
-                    singleComment ? (<h2>{singleComment.id} -
-                        {singleComment.name} -
-                        {singleComment.email}  </h2>) : (<div>comment not defined</div>)
-                };
-
-            </div>
-
-        </div>
+    <div>
+        {
+            comments.map(value => <Comment key={value.id} item={value} url={url}/>)
+        }
+        <Switch>
+            <Route path={'/comments/:id'} component={CommentDetails}/>
+        </Switch>
+    </div>
     );
-
 }

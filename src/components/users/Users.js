@@ -1,42 +1,40 @@
 import {useEffect, useState} from 'react';
 import User from '../user/User';
-import './Users.css';
-import axiosInstance from '../../services/api';
+import {Route, Switch} from 'react-router-dom';
+import UserDetails from '../user-details/UserDetails';
 
-export default function Users() {
+
+export default function Users(props) {
+
+	let {match: {url}} = props;
 
 	let [users, setUsers] = useState([]);
-	let [singleUser, setSingleUser] = useState(null);
-
-
 	useEffect(() => {
-		axiosInstance.get('/users').then(value => setUsers([...value.data]));
+		fetch('https://jsonplaceholder.typicode.com/users')
+			.then(value => value.json())
+			.then(value => {
+				setUsers([...value]);
+			});
+
 	}, []);
 
-	const search = (id) => {
-		let findedUser = users.find(value => value.id === id);
-		console.log(findedUser);
-		setSingleUser(findedUser);
-	};
-
 	return (
-		<div className={'wrap'}>
-			<div className={'users-box'}>
-				{
-					users.map((value) => <User
-						key={value.id}
-						item={value}
-						search={search}/>)
-				}
+		<div>
+			{
+				users.map(value => <User key={value.id} item={value} url={url}/>)
+			}
+			<Switch>
+				{/*<Route path={'/users/:id'} render={*/}
+				{/*	(props) => {*/}
+				{/*		console.log();*/}
+				{/*		let {match: {params: {id}}} = props;*/}
 
-			</div>
-			<div className={'single-user-box'}>
-				{
-					singleUser ? (<h2>{singleUser.id} - {singleUser.username}</h2>) : (<div>user not defined</div>)
-				}
+				{/*		return <UserDetails key={id} id={id}/>;*/}
+				{/*	}}/>*/}
 
-			</div>
+				{/*<Route path={'/users/:id'} component={UserDetails}/>*/}
 
+			</Switch>
 		</div>
 	);
 }
