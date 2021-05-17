@@ -1,44 +1,36 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState} from "react";
 import Post from "../post/Post";
-import axiosInstance from '../../services/api';
-import './Posts.css';
+import {Switch, Route} from "react-router-dom"
+import PostDetails from "../post-details/PostDetails";
 
-export default function Posts(){
-    let [posts, setPosts] = useState([]);
-    let [chosenPost, setChosenPost] = useState(null);
+export default function Posts(props) {
+	let {match:{url}} = props;
 
-    useEffect(() => {
-        axiosInstance.get('/posts').then(value => setPosts([...value.data]));
-    },[]);
-
-    const search = (id) =>{
-        let findedPost = posts.find(value => value.id === id);
-        console.log(findedPost);
-        setChosenPost(findedPost);
-    };
+	let [posts, setPosts] = useState([]);
 
 
 
+	useEffect(()=>{
+		fetch('https://jsonplaceholder.typicode.com/posts/')
+			.then(value => value.json())
+			.then(value => {
+				setPosts([...value]);
+			});
+	}, []);
 
-    return(
-        <div className={'wrap-post'}>
-            <div className={'posts-box'}>
-                {
-                    posts.map((value) => <Post key={value.id}
-                    item={value}
-                    search={search()}/>)
-                }
-                <div className={'single-post-box'}>
-                    {
-                        chosenPost ? (<h2>{chosenPost.id} - {chosenPost.title}</h2>) : (<div>post not defined</div>)
-                    }
-                </div>
-
-            </div>
-
-        </div>
-    );
-
-
-
+	return (
+		<div>
+			{
+			posts.map(value => <Post key={value.id} item={value} url={url}/> )
+			}
+			<Switch>
+				<Route path={'/posts/:id'} render={
+					(props) => {
+					console.log(props);
+					let {match:{params:{id}}} = props;
+					return <PostDetails key={id} id={id}/>;
+				}}/>
+			</Switch>
+		</div>
+	);
 }

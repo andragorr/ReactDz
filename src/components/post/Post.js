@@ -1,10 +1,11 @@
-export default function Post(item,search){
-    return(
-        <div>
-            {item.id} -
-            {item.title} -
-            {item.body}
-            <button onClick={()=> search(item.id)}>details</button>
-        </div>
-    )
+import {Link} from "react-router-dom";
+
+export default function Post(props) {
+    let {item, url}= props;
+    return (
+    <div>
+        {item.id}
+        <Link to={url + '/' + item.id}>post details</Link>
+    </div>
+    );
 }
